@@ -1,0 +1,7 @@
+# crontab -u www-data /var/www/b2b-portal/deploy/crontab
+# Laravel scheduler: RFQ expiry (00:10), overdue invoice reminders (09:05),
+# expired Sanctum token pruning and password-reset cleanup.
+* * * * * cd /var/www/b2b-portal/backend && php artisan schedule:run >> /dev/null 2>&1
+
+# Nightly encrypted backups (DB + private KYC/payment files) — see docs/DEPLOYMENT.md §7
+30 2 * * * /var/www/b2b-portal/deploy/backup.sh >> /var/log/b2b-portal-backup.log 2>&1

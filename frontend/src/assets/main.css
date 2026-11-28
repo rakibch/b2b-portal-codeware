@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+/* Design tokens — crisp B2B SaaS palette (teal primary, slate neutrals). */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-bangla: 'Hind Siliguri', 'Noto Sans Bengali', 'Inter', ui-sans-serif, sans-serif;
+
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+
+  --color-surface: #f8fafc;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+}
+
+/* Locale-driven typography: <html lang="bn"> switches the whole UI to Hind Siliguri. */
+html[lang='bn'] body {
+  font-family: var(--font-bangla);
+  line-height: 1.6;
+}
+
+.font-bangla {
+  font-family: var(--font-bangla);
+}
+
+/* Tabular numerals keep amounts aligned in tables. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-line bg-white shadow-sm;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink shadow-sm placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-50;
+  }
+
+  .label {
+    @apply mb-1 block text-sm font-medium text-slate-700;
+  }
+
+  .field-error {
+    @apply mt-1 text-xs text-red-600;
+  }
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
