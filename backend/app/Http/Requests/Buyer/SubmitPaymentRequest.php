@@ -16,7 +16,7 @@ class SubmitPaymentRequest extends FormRequest
     {
         return [
             'method' => ['required', Rule::in(['bank_transfer', 'cheque'])],
-            'order_id' => ['nullable', 'integer', 'min:1'],
+            'order_number' => ['nullable', 'string', 'max:32'],
             'amount' => ['required', 'decimal:0,2', 'gt:0', 'max:999999999999'],
             'transaction_ref' => ['required_if:method,bank_transfer', 'nullable', 'string', 'max:100'],
             'bank_name' => ['required', 'string', 'max:100'],

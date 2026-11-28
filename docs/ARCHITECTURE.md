@@ -136,7 +136,7 @@ b2b-portal-codeware/
         ├── i18n/{index.js, locales/en.json, locales/bn.json}
         ├── composables/{useFormat.js (formatCurrency), useApiForm.js, useDebounce.js}
         ├── stores/{auth.js, locale.js, cart.js, catalog.js, notifications.js, toast.js}
-        ├── router/{index.js, guards.js (pure, tested), navigation.js}
+        ├── router/{index.js, guards.js (pure, tested), navigation.js, routes/buyer.js}
         ├── layouts/{AuthLayout.vue, PortalLayout.vue}
         ├── components/
         │   ├── layout/{AppNavbar, AppSidebar, LocaleSwitcher (EN | বাং), NotificationBell, UserMenu, ToastHost, AnnouncementBar}.vue
@@ -144,6 +144,9 @@ b2b-portal-codeware/
         └── views/
             ├── auth/{Login, ForgotPassword, ResetPassword}View.vue           (Phase 4)
             ├── account/AccountView.vue, errors/{Forbidden, NotFound}View.vue  (Phase 4)
-            ├── buyer/*                                                         (Phase 5)
+            ├── auth/{Register (5-step KYC wizard), AcceptInvitation}View.vue  (Phase 5)
+            ├── buyer/{Dashboard, KycStatus, Catalog, ProductDetail, QuickOrder, Cart, Checkout,
+            │          Orders, OrderDetail, Rfqs, RfqCreate, RfqDetail, Invoices, Payments, Ledger,
+            │          Company, Addresses, Team}View.vue                        (Phase 5)
             └── admin/*                                                         (Phase 6)
 ```

@@ -12,7 +12,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and f
 | 2 | Auth, RBAC, KYC, PricingEngine, catalog, quick order, RFQ APIs | ✅ Done |
 | 3 | Orders, credit ledger, payments, mPDF invoices/challans, routes, policies, lang | ✅ Done |
 | 4 | Vue foundation: i18n, Pinia, router guards, layout | ✅ Done |
-| 5 | Buyer portal UI | ⏳ |
+| 5 | Buyer portal UI | ✅ Done |
 | 6 | Admin portal UI, deployment checklist | ⏳ |
 
 ## Backend setup

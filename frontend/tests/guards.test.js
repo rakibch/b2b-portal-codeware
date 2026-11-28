@@ -53,6 +53,13 @@ describe('decideNavigation', () => {
 })
 
 describe('visibleNavigation', () => {
+  it('shows the dashboard (not verification status) once approved', () => {
+    const sections = visibleNavigation(buyerNavigation, { hasRoute, can: () => true, canTransact: true })
+    const names = sections.flatMap((s) => s.items.map((i) => i.name))
+    expect(names).toContain('buyer.dashboard')
+    expect(names).not.toContain('kyc.status')
+  })
+
   it('hides unregistered, unauthorised and KYC-locked items', () => {
     const sections = visibleNavigation(buyerNavigation, {
       hasRoute,
@@ -60,6 +67,6 @@ describe('visibleNavigation', () => {
       canTransact: false,
     })
     const names = sections.flatMap((s) => s.items.map((i) => i.name))
-    expect(names).toEqual(['buyer.dashboard', 'buyer.catalog'])
+    expect(names).toEqual(['kyc.status', 'buyer.catalog'])
   })
 })

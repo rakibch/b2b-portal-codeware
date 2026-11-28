@@ -43,7 +43,8 @@ export function formatDate(value, locale = 'en', options = { day: '2-digit', mon
 }
 
 export function formatDateTime(value, locale = 'en') {
-  return formatDate(value, locale, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  // Bangla UI uses 24-hour time (avoids mixing Latin AM/PM into Bangla text).
+  return formatDate(value, locale, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: locale === 'bn' ? 'h23' : 'h12' })
 }
 
 const RELATIVE_UNITS = [

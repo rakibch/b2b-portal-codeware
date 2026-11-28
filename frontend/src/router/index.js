@@ -22,7 +22,14 @@ const portalChildren = [
   },
 ]
 
+// Portal first: both layouts sit at '/', and '/' itself must resolve to the portal 'home' route.
 export const routes = [
+  {
+    path: '/',
+    name: 'portal',
+    component: PortalLayout,
+    children: [{ path: '', name: 'home', component: { render: () => null }, meta: { home: true } }, ...portalChildren],
+  },
   {
     path: '/',
     component: AuthLayout,
@@ -30,13 +37,9 @@ export const routes = [
       { path: 'login', name: 'login', component: () => import('@/views/auth/LoginView.vue'), meta: { guest: true, titleKey: 'auth.sign_in' } },
       { path: 'forgot-password', name: 'forgot-password', component: () => import('@/views/auth/ForgotPasswordView.vue'), meta: { guest: true, titleKey: 'auth.forgot_title' } },
       { path: 'reset-password', name: 'reset-password', component: () => import('@/views/auth/ResetPasswordView.vue'), meta: { public: true, titleKey: 'auth.reset_title' } },
+      { path: 'register', name: 'register', component: () => import('@/views/auth/RegisterView.vue'), meta: { guest: true, titleKey: 'register.title' } },
+      { path: 'accept-invitation', name: 'accept-invitation', component: () => import('@/views/auth/AcceptInvitationView.vue'), meta: { guest: true, titleKey: 'team.accept' } },
     ],
-  },
-  {
-    path: '/',
-    name: 'portal',
-    component: PortalLayout,
-    children: [{ path: '', name: 'home', component: { render: () => null }, meta: { home: true } }, ...portalChildren],
   },
   {
     path: '/:pathMatch(.*)*',

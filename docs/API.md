@@ -62,6 +62,8 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 
 | Method | Path | Gate |
 |---|---|---|
+| GET | `/dashboard` | Credit meter, stats, recent orders, open RFQs, outstanding invoices, quick-reorder suggestions |
+| GET | `/checkout/preview` | Server-computed totals incl. delivery charge, available credit, allowed payment methods (with reasons), approval requirement |
 | GET/PATCH | `/company` | profile (PATCH: buyer admin) |
 | POST | `/company/documents` | KYC (re)submission while pending/rejected |
 | CRUD | `/addresses` | billing + multiple delivery branches |
@@ -86,7 +88,7 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 | POST | `/orders/{order_number}/reorder` | Re-validates price/MOQ/stock → cart; returns `added` / `skipped` |
 | POST | `/orders/{order_number}/pay-online` | Starts a gateway session → `redirect_url` |
 | GET | `/invoices?status=outstanding|overdue|…` · `/invoices/{number}` | |
-| GET/POST | `/payments` | List / submit bank transfer or cheque (`method, amount, order_id?, transaction_ref|cheque_number, bank_name, deposit_date, slip`) |
+| GET/POST | `/payments` | List / submit bank transfer or cheque (`method, amount, order_number?, transaction_ref|cheque_number, bank_name, deposit_date, slip`) |
 | GET | `/ledger?from=&to=` · `/ledger/export?format=xlsx|csv` | Statement of account (opening/closing balance, running balance) |
 
 ## Admin portal (`/admin`, staff only)

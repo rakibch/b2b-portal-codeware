@@ -7,6 +7,8 @@
     "skip_to_content": "Skip to content"
   },
   "common": {
+    "saved": "Saved successfully.",
+    "you": "you",
     "save": "Save",
     "save_changes": "Save changes",
     "cancel": "Cancel",
@@ -88,6 +90,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "kyc_status": "Verification status",
     "catalog": "Catalog",
     "quick_order": "Quick Order",
     "cart": "Cart",
@@ -224,6 +227,25 @@
     "approval_limit": "Order approval limit",
     "no_limit": "No limit"
   },
+  "business_type": {
+    "retailer": "Retailer",
+    "wholesaler": "Wholesaler",
+    "distributor": "Distributor",
+    "super_shop": "Super Shop",
+    "pharmacy": "Pharmacy",
+    "restaurant": "Restaurant / HoReCa",
+    "corporate": "Corporate",
+    "other": "Other"
+  },
+  "order_status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "partially_dispatched": "Partially dispatched",
+    "dispatched": "Dispatched",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
   "roles": {
     "super_admin": "Super Admin",
     "sales_manager": "Sales / Account Manager",
@@ -345,6 +367,8 @@
     "removed": "Item removed"
   },
   "checkout": {
+    "below_minimum": "Minimum order value is {amount}.",
+    "credit_short": "Company credit (Net terms)",
     "title": "Checkout",
     "delivery_address": "Delivery address",
     "payment_method": "Payment method",
@@ -400,6 +424,8 @@
     "on_behalf": "New order for customer"
   },
   "rfq": {
+    "new_subtitle": "Ask for special pricing on bulk quantities. Our sales team usually replies within one business day.",
+    "excl_vat": "excl. VAT",
     "title": "Quote requests",
     "new": "New quote request",
     "reference": "Reference",
@@ -480,6 +506,9 @@
     "not_enabled": "Credit not enabled"
   },
   "dashboard": {
+    "awaiting_approval": "{count} orders from your team are awaiting your approval",
+    "open_orders": "Open orders",
+    "no_reorder_items": "Your frequently ordered products will appear here.",
     "welcome": "Welcome back, {name}",
     "recent_orders": "Recent orders",
     "pending_rfqs": "Open quote requests",
@@ -496,6 +525,8 @@
     "to_dispatch": "Ready to dispatch"
   },
   "team": {
+    "expires": "expires {date}",
+    "invitation_invalid": "This invitation link is invalid or has expired.",
     "title": "Team members",
     "invite": "Invite member",
     "invitations": "Pending invitations",

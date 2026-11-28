@@ -7,6 +7,8 @@
     "skip_to_content": "মূল অংশে যান"
   },
   "common": {
+    "saved": "সফলভাবে সংরক্ষিত হয়েছে।",
+    "you": "আপনি",
     "save": "সংরক্ষণ",
     "save_changes": "পরিবর্তন সংরক্ষণ",
     "cancel": "বাতিল",
@@ -88,6 +90,7 @@
   },
   "nav": {
     "dashboard": "ড্যাশবোর্ড",
+    "kyc_status": "যাচাইয়ের অবস্থা",
     "catalog": "ক্যাটালগ",
     "quick_order": "দ্রুত অর্ডার",
     "cart": "কার্ট",
@@ -224,6 +227,25 @@
     "approval_limit": "অর্ডার অনুমোদন সীমা",
     "no_limit": "সীমা নেই"
   },
+  "business_type": {
+    "retailer": "খুচরা বিক্রেতা",
+    "wholesaler": "পাইকারি বিক্রেতা",
+    "distributor": "পরিবেশক",
+    "super_shop": "সুপার শপ",
+    "pharmacy": "ফার্মেসি",
+    "restaurant": "রেস্টুরেন্ট / হোরেকা",
+    "corporate": "কর্পোরেট",
+    "other": "অন্যান্য"
+  },
+  "order_status": {
+    "pending": "অপেক্ষমাণ",
+    "confirmed": "নিশ্চিত",
+    "processing": "প্রক্রিয়াধীন",
+    "partially_dispatched": "আংশিক প্রেরিত",
+    "dispatched": "প্রেরিত",
+    "delivered": "ডেলিভারি সম্পন্ন",
+    "cancelled": "বাতিল"
+  },
   "roles": {
     "super_admin": "সুপার অ্যাডমিন",
     "sales_manager": "সেলস / অ্যাকাউন্ট ম্যানেজার",
@@ -345,6 +367,8 @@
     "removed": "পণ্য সরানো হয়েছে"
   },
   "checkout": {
+    "below_minimum": "সর্বনিম্ন অর্ডার মূল্য {amount}।",
+    "credit_short": "কোম্পানি ক্রেডিট (বাকি)",
     "title": "চেকআউট",
     "delivery_address": "ডেলিভারি ঠিকানা",
     "payment_method": "পরিশোধ পদ্ধতি",
@@ -400,6 +424,8 @@
     "on_behalf": "গ্রাহকের পক্ষে নতুন অর্ডার"
   },
   "rfq": {
+    "new_subtitle": "বড় পরিমাণে বিশেষ মূল্যের জন্য অনুরোধ করুন। আমাদের সেলস টিম সাধারণত এক কর্মদিবসের মধ্যে উত্তর দেয়।",
+    "excl_vat": "ভ্যাট ছাড়া",
     "title": "মূল্য অনুরোধ",
     "new": "নতুন মূল্য অনুরোধ",
     "reference": "রেফারেন্স",
@@ -480,6 +506,9 @@
     "not_enabled": "ক্রেডিট চালু নেই"
   },
   "dashboard": {
+    "awaiting_approval": "আপনার টিমের {count}টি অর্ডার আপনার অনুমোদনের অপেক্ষায়",
+    "open_orders": "চলমান অর্ডার",
+    "no_reorder_items": "আপনার নিয়মিত অর্ডার করা পণ্য এখানে দেখা যাবে।",
     "welcome": "স্বাগতম, {name}",
     "recent_orders": "সাম্প্রতিক অর্ডার",
     "pending_rfqs": "চলমান মূল্য অনুরোধ",
@@ -496,6 +525,8 @@
     "to_dispatch": "প্রেরণের জন্য প্রস্তুত"
   },
   "team": {
+    "expires": "মেয়াদ {date}",
+    "invitation_invalid": "আমন্ত্রণ লিংকটি অবৈধ বা মেয়াদোত্তীর্ণ।",
     "title": "টিম সদস্য",
     "invite": "সদস্য আমন্ত্রণ",
     "invitations": "অপেক্ষমাণ আমন্ত্রণ",

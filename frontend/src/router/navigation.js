@@ -1,11 +1,15 @@
 /**
  * Sidebar navigation. Items are shown only when their route is registered, the user holds one of
  * the listed permissions, and (for transactional pages) the buyer's company is KYC-approved.
+ * `pendingOnly` items are shown only until the company is approved (verification status page).
  */
 export const buyerNavigation = [
   {
     titleKey: null,
-    items: [{ name: 'buyer.dashboard', labelKey: 'nav.dashboard', icon: 'LayoutDashboard' }],
+    items: [
+      { name: 'buyer.dashboard', labelKey: 'nav.dashboard', icon: 'LayoutDashboard', approvedOnly: true },
+      { name: 'kyc.status', labelKey: 'nav.kyc_status', icon: 'ShieldCheck', pendingOnly: true },
+    ],
   },
   {
     titleKey: 'nav.section_ordering',
@@ -81,7 +85,8 @@ export function visibleNavigation(sections, { hasRoute, can, canTransact }) {
         (item) =>
           hasRoute(item.name) &&
           (!item.permissions || item.permissions.some((p) => can(p))) &&
-          (!item.approvedOnly || canTransact),
+          (!item.approvedOnly || canTransact) &&
+          (!item.pendingOnly || !canTransact),
       ),
     }))
     .filter((section) => section.items.length > 0)

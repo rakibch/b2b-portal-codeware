@@ -96,7 +96,7 @@ class FinanceTest extends TestCase
         $this->actingAsUser($buyer);
         $reference = $this->post('/api/v1/buyer/payments', [
             'method' => 'bank_transfer',
-            'order_id' => $order->id,
+            'order_number' => $order->order_number,
             'amount' => '34860.00',
             'transaction_ref' => 'NPSB-778812',
             'bank_name' => 'Example Bank',

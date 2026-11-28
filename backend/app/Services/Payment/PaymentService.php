@@ -46,7 +46,7 @@ class PaymentService
     public function submitManual(User $buyer, array $data, ?UploadedFile $slip): Payment
     {
         $company = $buyer->company;
-        $order = isset($data['order_id']) ? $this->companyOrder($company, (int) $data['order_id']) : null;
+        $order = ! empty($data['order_number']) ? $this->companyOrder($company, (string) $data['order_number']) : null;
         $disk = (string) config('b2b.payments.slip_disk');
         $slipPath = null;
 
@@ -298,9 +298,10 @@ class PaymentService
         }
     }
 
-    private function companyOrder(Company $company, int $orderId): Order
+    /** Tenant-scoped lookup: an order number from another company simply isn't found. */
+    private function companyOrder(Company $company, string $orderNumber): Order
     {
-        $order = Order::query()->where('company_id', $company->id)->whereKey($orderId)->first();
+        $order = Order::query()->where('company_id', $company->id)->where('order_number', $orderNumber)->first();
 
         if ($order === null || $order->status === OrderStatus::Cancelled) {
             throw BusinessRuleException::make('order_not_payable');

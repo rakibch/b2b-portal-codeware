@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Buyer\AddressController;
 use App\Http\Controllers\Api\Buyer\CartController;
 use App\Http\Controllers\Api\Buyer\CompanyController as BuyerCompanyController;
+use App\Http\Controllers\Api\Buyer\DashboardController as BuyerDashboardController;
 use App\Http\Controllers\Api\Buyer\InvoiceController as BuyerInvoiceController;
 use App\Http\Controllers\Api\Buyer\OrderController as BuyerOrderController;
 use App\Http\Controllers\Api\Buyer\PaymentController as BuyerPaymentController;
@@ -108,6 +109,9 @@ Route::prefix('v1')->group(function (): void {
             Route::apiResource('addresses', AddressController::class)->whereNumber('address');
 
             Route::middleware('company.approved')->group(function (): void {
+                Route::get('dashboard', BuyerDashboardController::class);
+                Route::get('checkout/preview', [BuyerDashboardController::class, 'checkoutPreview']);
+
                 // Team
                 Route::get('team/members', [TeamController::class, 'members']);
                 Route::patch('team/members/{member}', [TeamController::class, 'updateMember'])->whereNumber('member');
