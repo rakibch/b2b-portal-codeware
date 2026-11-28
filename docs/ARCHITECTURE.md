@@ -33,6 +33,25 @@ Quantity rules checked on every quote: active product, MOQ, `(qty − MOQ) % ste
 Each quote returns exact 2dp totals (subtotal, discount vs list, VAT, total) plus a `next_tier` hint
 ("add 8 more to pay ৳830"). Listings are priced in batch with ≤ 2 queries regardless of line count.
 
+## Order, credit & payment flow (Phase 3)
+
+```
+checkout ──► [tx] lock company → lock products (id order) → re-price → credit check (limit − ledger balance − uninvoiced pending credit orders)
+          ──► create order + item snapshots → conditional stock decrement → status history → clear cart
+          ──► (sub-user over limit) approval_status = pending → Buyer Admin approves/rejects
+confirm  ──► [tx] invoice (due = today + Net-N for credit) → ledger DEBIT → apply prepaid (gateway) payments
+ship     ──► shipments (one Delivery Challan each, partial allowed) → processing → partially_dispatched → dispatched → delivered
+pay      ──► bank/cheque slip (pending) → staff verify → ledger CREDIT → allocate (order invoice, then FIFO by due date)
+          ──► gateway: signed session → callback verified by driver (HMAC/validation API, amount check, idempotent)
+cancel   ──► restore undispatched stock → void invoice → ledger REVERSAL (payments stay as credit on account)
+```
+
+- Lock order is always **company → order → products** (deadlock-free). Concurrency verified on PostgreSQL:
+  two parallel checkouts for the last 40 units → exactly one order, stock 0.
+- Overdue invoices block new credit orders; `invoices:remind-overdue` notifies buyer admins on day 1/7/14/30.
+- PDFs: mPDF + Noto Sans Bengali with OTL; Bangla numerals, lakh/crore grouping and amount-in-words
+  (`App\Support\Localized`). Challans never contain prices.
+
 ## Database (ERD summary)
 
 ```

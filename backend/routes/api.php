@@ -5,7 +5,11 @@ use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController
 use App\Http\Controllers\Api\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Api\Admin\CompanyPriceController;
 use App\Http\Controllers\Api\Admin\CustomerGroupController;
+use App\Http\Controllers\Api\Admin\FinanceController;
+use App\Http\Controllers\Api\Admin\FulfilmentController;
 use App\Http\Controllers\Api\Admin\KycController;
+use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\RfqController as AdminRfqController;
 use App\Http\Controllers\Api\Admin\UnitController;
@@ -16,11 +20,18 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Buyer\AddressController;
 use App\Http\Controllers\Api\Buyer\CartController;
 use App\Http\Controllers\Api\Buyer\CompanyController as BuyerCompanyController;
+use App\Http\Controllers\Api\Buyer\InvoiceController as BuyerInvoiceController;
+use App\Http\Controllers\Api\Buyer\OrderController as BuyerOrderController;
+use App\Http\Controllers\Api\Buyer\PaymentController as BuyerPaymentController;
 use App\Http\Controllers\Api\Buyer\QuickOrderController;
 use App\Http\Controllers\Api\Buyer\RfqController as BuyerRfqController;
 use App\Http\Controllers\Api\Buyer\TeamController;
 use App\Http\Controllers\Api\Catalog\CatalogController;
+use App\Http\Controllers\Api\Payments\GatewayController;
 use App\Http\Controllers\Api\Shared\DocumentDownloadController;
+use App\Http\Controllers\Api\Shared\DocumentPdfController;
+use App\Http\Controllers\Api\Shared\LedgerController;
+use App\Http\Controllers\Api\Shared\PaymentSlipController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +56,13 @@ Route::prefix('v1')->group(function (): void {
         Route::post('invitations/accept', [InvitationController::class, 'accept'])->middleware('throttle:register');
     });
 
+    // ---------------------------------------------------------------- Payment gateways (server-to-server, signature-verified)
+    Route::prefix('payments')->middleware('throttle:60,1')->group(function (): void {
+        Route::post('{gateway}/callback', [GatewayController::class, 'callback'])->where('gateway', '[a-z0-9_]+')->name('payments.callback');
+        Route::get('mock/{payment}/checkout', [GatewayController::class, 'mockCheckout'])->middleware('signed')->name('payments.mock.checkout');
+        Route::post('mock/return', [GatewayController::class, 'mockReturn'])->name('payments.mock.return');
+    });
+
     Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
 
         // ------------------------------------------------------------ Session / profile
@@ -57,6 +75,9 @@ Route::prefix('v1')->group(function (): void {
         });
 
         Route::get('documents/{document}/download', DocumentDownloadController::class)->whereNumber('document');
+        Route::get('invoices/{invoice}/pdf', [DocumentPdfController::class, 'invoice']);
+        Route::get('shipments/{shipment}/challan', [DocumentPdfController::class, 'challan']);
+        Route::get('payments/{payment}/slip', PaymentSlipController::class);
 
         // ------------------------------------------------------------ Catalog (prices gated inside)
         Route::prefix('catalog')->middleware('throttle:search')->group(function (): void {
@@ -105,6 +126,25 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('rfqs/{rfq}/accept', [BuyerRfqController::class, 'accept']);
                 Route::post('rfqs/{rfq}/reject', [BuyerRfqController::class, 'reject']);
                 Route::post('rfqs/{rfq}/cancel', [BuyerRfqController::class, 'cancel']);
+                Route::post('rfqs/{rfq}/order', [BuyerOrderController::class, 'fromRfq']);
+
+                // Orders
+                Route::get('orders', [BuyerOrderController::class, 'index']);
+                Route::post('orders', [BuyerOrderController::class, 'store'])->middleware('throttle:20,1');
+                Route::get('orders/{order}', [BuyerOrderController::class, 'show']);
+                Route::post('orders/{order}/cancel', [BuyerOrderController::class, 'cancel']);
+                Route::post('orders/{order}/approve', [BuyerOrderController::class, 'approve']);
+                Route::post('orders/{order}/reject', [BuyerOrderController::class, 'rejectApproval']);
+                Route::post('orders/{order}/reorder', [BuyerOrderController::class, 'reorder']);
+                Route::post('orders/{order}/pay-online', [BuyerPaymentController::class, 'payOnline']);
+
+                // Finance
+                Route::get('invoices', [BuyerInvoiceController::class, 'index']);
+                Route::get('invoices/{invoice}', [BuyerInvoiceController::class, 'show']);
+                Route::get('payments', [BuyerPaymentController::class, 'index']);
+                Route::post('payments', [BuyerPaymentController::class, 'store'])->middleware('throttle:uploads');
+                Route::get('ledger', [LedgerController::class, 'buyerStatement']);
+                Route::get('ledger/export', [LedgerController::class, 'buyerExport']);
             });
         });
 
@@ -161,6 +201,47 @@ Route::prefix('v1')->group(function (): void {
                 Route::apiResource('categories', AdminCategoryController::class)->except('index')->whereNumber('category');
                 Route::apiResource('brands', AdminBrandController::class)->except('index')->whereNumber('brand');
                 Route::apiResource('units', UnitController::class)->except('index')->whereNumber('unit');
+            });
+
+            // Orders
+            Route::middleware('permission:orders.view')->group(function (): void {
+                Route::get('orders', [AdminOrderController::class, 'index']);
+                Route::get('orders/{order}', [AdminOrderController::class, 'show']);
+                Route::get('shipments', [FulfilmentController::class, 'index']);
+            });
+            Route::post('companies/{company}/orders', [AdminOrderController::class, 'store'])->middleware('permission:orders.create_on_behalf');
+            Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.update_status');
+            Route::post('orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->middleware('permission:orders.cancel');
+
+            // Fulfilment (warehouse / dispatch)
+            Route::middleware('permission:orders.fulfil')->group(function (): void {
+                Route::post('orders/{order}/shipments', [FulfilmentController::class, 'store']);
+                Route::post('shipments/{shipment}/dispatch', [FulfilmentController::class, 'dispatch']);
+                Route::post('shipments/{shipment}/deliver', [FulfilmentController::class, 'deliver']);
+                Route::delete('shipments/{shipment}', [FulfilmentController::class, 'destroy']);
+            });
+
+            // Payments
+            Route::middleware('role_or_permission:payments.view|payments.verify')->group(function (): void {
+                Route::get('payments', [AdminPaymentController::class, 'index']);
+                Route::get('payments/{payment}', [AdminPaymentController::class, 'show']);
+            });
+            Route::middleware('permission:payments.verify')->group(function (): void {
+                Route::post('payments/{payment}/verify', [AdminPaymentController::class, 'verify']);
+                Route::post('payments/{payment}/reject', [AdminPaymentController::class, 'reject']);
+                Route::post('orders/{order}/cash-payments', [AdminPaymentController::class, 'recordCash']);
+            });
+
+            // Finance: invoices, ledger, credit notes
+            Route::get('invoices', [FinanceController::class, 'invoices'])->middleware('permission:invoices.view');
+            Route::middleware('permission:ledger.view')->group(function (): void {
+                Route::get('companies/{company}/ledger', [LedgerController::class, 'companyStatement']);
+                Route::get('companies/{company}/ledger/export', [LedgerController::class, 'companyExport']);
+                Route::get('companies/{company}/credit-notes', [FinanceController::class, 'creditNotes']);
+            });
+            Route::middleware('permission:ledger.adjust')->group(function (): void {
+                Route::post('companies/{company}/ledger/adjustments', [FinanceController::class, 'adjust']);
+                Route::post('companies/{company}/credit-notes', [FinanceController::class, 'creditNote']);
             });
 
             // RFQs

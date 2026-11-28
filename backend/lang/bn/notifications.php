@@ -49,4 +49,39 @@ return [
         'body' => ':inviter আপনাকে আমাদের পাইকারি পোর্টালে :company এর পক্ষে অর্ডার করার জন্য আমন্ত্রণ জানিয়েছেন। এই আমন্ত্রণের মেয়াদ :hours ঘণ্টা।',
         'action' => 'আমন্ত্রণ গ্রহণ করুন',
     ],
+    'order_placed' => [
+        'subject' => ':company থেকে নতুন অর্ডার :number',
+        'body' => ':company :total মূল্যের অর্ডার :number দিয়েছে।',
+        'action' => 'অর্ডার দেখুন',
+    ],
+    'order_approval_requested' => [
+        'subject' => 'অর্ডার :number আপনার অনুমোদনের অপেক্ষায়',
+        'body' => ':name :total মূল্যের অর্ডার :number দিয়েছেন, যা তাঁর অনুমোদন সীমার বেশি।',
+        'action' => 'দেখে অনুমোদন দিন',
+    ],
+    'order_status_changed' => [
+        'subject' => 'অর্ডার :number এখন :status',
+        'body' => 'আপনার অর্ডার :number এর অবস্থা পরিবর্তিত হয়েছে: :status।',
+        'action' => 'অর্ডার ট্র্যাক করুন',
+    ],
+    'payment_submitted' => [
+        'subject' => 'পেমেন্ট :reference যাচাইয়ের অপেক্ষায়',
+        'body' => ':company :amount পেমেন্ট (:reference) জমা দিয়েছে।',
+        'action' => 'পেমেন্ট যাচাই করুন',
+    ],
+    'payment_verified' => [
+        'subject' => 'পেমেন্ট :reference গৃহীত হয়েছে',
+        'body' => 'আপনার :amount পেমেন্ট (:reference) গৃহীত ও যাচাই করা হয়েছে। ধন্যবাদ!',
+        'action' => 'হিসাব বিবরণী দেখুন',
+    ],
+    'payment_rejected' => [
+        'subject' => 'পেমেন্ট :reference যাচাই করা যায়নি',
+        'body' => 'আপনার :amount পেমেন্ট (:reference) যাচাই করা যায়নি। কারণ: :reason',
+        'action' => 'পেমেন্ট দেখুন',
+    ],
+    'invoice_overdue' => [
+        'subject' => 'ইনভয়েস :number এর পরিশোধের মেয়াদ পেরিয়েছে',
+        'body' => ':amount বকেয়াসহ ইনভয়েস :number এর পরিশোধের তারিখ ছিল :due_date। ক্রেডিট সুবিধা চালু রাখতে অনুগ্রহ করে পরিশোধ করুন।',
+        'action' => 'এখনই পরিশোধ করুন',
+    ],
 ];

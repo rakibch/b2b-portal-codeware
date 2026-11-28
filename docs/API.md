@@ -29,7 +29,21 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 ## Auth (authenticated)
 
 `GET /auth/me` · `POST /auth/logout` · `POST /auth/logout-all` · `PATCH /auth/me/locale` · `PUT /auth/me/password`
-`GET /documents/{id}/download` — KYC document stream (owner company admin or reviewing staff only)
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/documents/{id}/download` | KYC document stream (owner company admin or reviewing staff) |
+| GET | `/invoices/{invoice_number}/pdf?lang=en\|bn&inline=1` | Tax Invoice PDF (buyer company or staff) |
+| GET | `/shipments/{challan_number}/challan?lang=en\|bn` | Delivery Challan PDF — no prices |
+| GET | `/payments/{reference}/slip` | Bank/cheque slip (owner company or staff) |
+
+## Payment gateways (public, signature-verified)
+
+| Method | Path | Notes |
+|---|---|---|
+| POST | `/payments/{gateway}/callback` | IPN / webhook. Driver authenticates (HMAC / validation API), amount + currency checked, idempotent |
+| GET | `/payments/mock/{reference}/checkout` | Sandbox hosted page (signed URL, mock driver only) |
+| POST | `/payments/mock/return` | Sandbox browser return → redirects to the SPA |
 
 ## Catalog (any authenticated user; prices only for staff / approved buyers)
 
@@ -60,6 +74,17 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 | GET/POST | `/rfqs` | list / create (`items[{product_id, quantity, target_unit_price?, notes?}]`) |
 | GET | `/rfqs/{reference}` | |
 | POST | `/rfqs/{reference}/accept|reject|cancel` | accept/reject a quote; cancel before quoting |
+| POST | `/rfqs/{reference}/order` | Convert accepted/quoted RFQ → order at quoted prices (checkout body) |
+| GET | `/orders?status=&approval=&q=&mine=` | Company orders |
+| POST | `/orders` | Checkout cart: `shipping_address_id, payment_method(credit|cod|bank_transfer|gateway), po_number?, buyer_notes?` — atomic, row-locked, credit-checked |
+| GET | `/orders/{order_number}` | Detail: items, history, shipments, invoice, allowed actions |
+| POST | `/orders/{order_number}/cancel` | `reason` — pending only (placer or buyer admin) |
+| POST | `/orders/{order_number}/approve` · `/reject` | Buyer admin approval of sub-user orders above their limit |
+| POST | `/orders/{order_number}/reorder` | Re-validates price/MOQ/stock → cart; returns `added` / `skipped` |
+| POST | `/orders/{order_number}/pay-online` | Starts a gateway session → `redirect_url` |
+| GET | `/invoices?status=outstanding|overdue|…` · `/invoices/{number}` | |
+| GET/POST | `/payments` | List / submit bank transfer or cheque (`method, amount, order_id?, transaction_ref|cheque_number, bank_name, deposit_date, slip`) |
+| GET | `/ledger?from=&to=` · `/ledger/export?format=xlsx|csv` | Statement of account (opening/closing balance, running balance) |
 
 ## Admin portal (`/admin`, staff only)
 
@@ -77,6 +102,19 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 | GET | `/products` · `/products/{id}` · `/categories` · `/brands` · `/units` | `catalog.view` |
 | POST/PATCH/DELETE | `/products`, `/categories`, `/brands`, `/units`; `POST /products/{id}/restore` | `catalog.manage` |
 | POST | `/products/{id}/stock-adjustments` | `inventory.adjust` · `delta, reason` |
+| GET | `/orders?status[]=&payment_method=&company_id=&q=&from=&to=` · `/orders/{order_number}` | `orders.view` (sales: own accounts; warehouse: confirmed+) |
+| POST | `/companies/{company}/orders` | `orders.create_on_behalf` |
+| PATCH | `/orders/{order_number}/status` | `orders.update_status` · `confirmed` (issues invoice + ledger debit) or `processing` |
+| POST | `/orders/{order_number}/cancel` | `orders.cancel` · restores stock, voids invoice, reverses ledger |
+| GET | `/shipments` | `orders.view` |
+| POST | `/orders/{order_number}/shipments` | `orders.fulfil` · `items[{order_item_id, quantity}]` + carrier details (partial allowed) |
+| POST | `/shipments/{challan}/dispatch` · `/deliver` · DELETE `/shipments/{challan}` | `orders.fulfil` |
+| GET | `/payments` · `/payments/{reference}` | `payments.view` or `payments.verify` |
+| POST | `/payments/{reference}/verify` · `/reject` | `payments.verify` · verify posts ledger credit and allocates (order invoice first, then FIFO by due date) |
+| POST | `/orders/{order_number}/cash-payments` | `payments.verify` · COD cash collected |
+| GET | `/invoices?status=&company_id=` | `invoices.view` |
+| GET | `/companies/{company}/ledger` · `/ledger/export` · `/credit-notes` | `ledger.view` |
+| POST | `/companies/{company}/ledger/adjustments` · `/credit-notes` | `ledger.adjust` |
 | GET | `/rfqs` · `/rfqs/{reference}` | `rfqs.view` |
 | POST | `/rfqs/{reference}/review|quote|decline` | `rfqs.quote` |
 

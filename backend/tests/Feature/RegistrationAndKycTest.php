@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\KycStatus;
 use App\Enums\Role;
 use App\Models\Company;
+use App\Models\CustomerGroup;
 use App\Models\User;
 use App\Notifications\KycApprovedNotification;
 use App\Notifications\KycSubmittedNotification;
@@ -150,7 +151,7 @@ class RegistrationAndKycTest extends TestCase
         $this->postJson("/api/v1/admin/kyc/{$company->public_id}/approve", [
             'credit_limit' => '250000.00',
             'payment_terms_days' => 30,
-            'customer_group_id' => \App\Models\CustomerGroup::query()->where('code', 'gold')->value('id'),
+            'customer_group_id' => CustomerGroup::query()->where('code', 'gold')->value('id'),
             'account_manager_id' => $manager->id,
         ])->assertOk()
             ->assertJsonPath('data.credit.credit_limit', '250000.00')

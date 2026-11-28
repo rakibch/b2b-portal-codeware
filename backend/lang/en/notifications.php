@@ -49,4 +49,39 @@ return [
         'body' => ':inviter has invited you to order for :company on our wholesale portal. This invitation expires in :hours hours.',
         'action' => 'Accept invitation',
     ],
+    'order_placed' => [
+        'subject' => 'New order :number from :company',
+        'body' => ':company placed order :number for :total.',
+        'action' => 'Review order',
+    ],
+    'order_approval_requested' => [
+        'subject' => 'Order :number needs your approval',
+        'body' => ':name placed order :number for :total, which exceeds their approval limit.',
+        'action' => 'Review & approve',
+    ],
+    'order_status_changed' => [
+        'subject' => 'Order :number is now :status',
+        'body' => 'Your order :number status changed to: :status.',
+        'action' => 'Track order',
+    ],
+    'payment_submitted' => [
+        'subject' => 'Payment :reference awaiting verification',
+        'body' => ':company submitted a payment of :amount (:reference).',
+        'action' => 'Verify payment',
+    ],
+    'payment_verified' => [
+        'subject' => 'Payment :reference received',
+        'body' => 'We have received and verified your payment of :amount (:reference). Thank you!',
+        'action' => 'View statement',
+    ],
+    'payment_rejected' => [
+        'subject' => 'Payment :reference could not be verified',
+        'body' => 'Your payment of :amount (:reference) could not be verified. Reason: :reason',
+        'action' => 'View payments',
+    ],
+    'invoice_overdue' => [
+        'subject' => 'Invoice :number is overdue',
+        'body' => 'Invoice :number with a balance of :amount was due on :due_date. Please arrange payment to keep your credit line active.',
+        'action' => 'Pay now',
+    ],
 ];

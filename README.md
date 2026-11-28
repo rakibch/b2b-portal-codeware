@@ -10,14 +10,14 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and f
 |---|---|---|
 | 1 | Architecture, migrations, models, seeders | ✅ Done |
 | 2 | Auth, RBAC, KYC, PricingEngine, catalog, quick order, RFQ APIs | ✅ Done |
-| 3 | Orders, credit ledger, payments, mPDF invoices/challans, routes, policies, lang | ⏳ |
+| 3 | Orders, credit ledger, payments, mPDF invoices/challans, routes, policies, lang | ✅ Done |
 | 4 | Vue foundation: i18n, Pinia, router guards, layout | ⏳ |
 | 5 | Buyer portal UI | ⏳ |
 | 6 | Admin portal UI, deployment checklist | ⏳ |
 
 ## Backend setup
 
-Requirements: PHP 8.3+ (gd, intl, mbstring, zip, xml, pdo_mysql/pdo_pgsql), Composer 2, MySQL 8 or PostgreSQL 14+.
+Requirements: PHP 8.3+ (gd, intl, mbstring, zip, xml, pdo_mysql/pdo_pgsql; mPDF fonts ship in `resources/fonts`), Composer 2, MySQL 8 or PostgreSQL 14+.
 
 ```bash
 cd backend
@@ -35,7 +35,13 @@ php artisan test            # SQLite in-memory
 DB_CONNECTION=pgsql DB_DATABASE=b2b_test php artisan test   # PostgreSQL
 ```
 
-### Scheduler
+### Queue & Scheduler
+
+Notifications are queued (`QUEUE_CONNECTION=database` or redis):
+
+```bash
+php artisan queue:work --tries=3 --backoff=30
+```
 
 ```bash
 * * * * * php /path/to/backend/artisan schedule:run >> /dev/null 2>&1

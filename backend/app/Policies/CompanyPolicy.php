@@ -32,4 +32,23 @@ class CompanyPolicy
     {
         return $user->isStaff() && $user->can('pricing.manage');
     }
+
+    public function viewLedger(User $user, Company $company): bool
+    {
+        if ($user->isBuyer()) {
+            return $user->company_id === $company->id && $user->can('ledger.view_company');
+        }
+
+        return $user->can('ledger.view') && $company->isVisibleTo($user);
+    }
+
+    public function adjustLedger(User $user, Company $company): bool
+    {
+        return $user->isStaff() && $user->can('ledger.adjust');
+    }
+
+    public function placeOrderOnBehalf(User $user, Company $company): bool
+    {
+        return $user->isStaff() && $user->can('orders.create_on_behalf') && $company->isVisibleTo($user);
+    }
 }

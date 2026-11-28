@@ -57,6 +57,34 @@ class PricingEngineService
     }
 
     /**
+     * Prices a line at a fixed, pre-agreed unit price (accepted RFQ quote) while still applying
+     * the product's quantity and stock rules.
+     */
+    public function quoteAtFixedPrice(Product $product, int $quantity, string $unitPrice, PriceSource $source, bool $checkStock = true): PriceQuote
+    {
+        $unitPrice = Money::format(Money::of($unitPrice));
+        $listPrice = Money::format(Money::of((string) $product->base_price));
+        $lineSubtotal = Money::mul($unitPrice, $quantity);
+        $vatPercent = Money::format(Money::of((string) $product->vat_percent));
+        $vatAmount = Money::percent($lineSubtotal, $vatPercent);
+
+        return new PriceQuote(
+            productId: $product->id,
+            quantity: $quantity,
+            listPrice: $listPrice,
+            unitPrice: $unitPrice,
+            source: $source,
+            vatPercent: $vatPercent,
+            lineSubtotal: $lineSubtotal,
+            discountAmount: Money::max(Money::sub(Money::mul($listPrice, $quantity), $lineSubtotal), '0'),
+            vatAmount: $vatAmount,
+            lineTotal: Money::add($lineSubtotal, $vatAmount),
+            availableStock: (int) $product->stock_quantity,
+            errors: $this->validateQuantity($product, $quantity, $checkStock),
+        );
+    }
+
+    /**
      * Effective price bands a given company sees for a product, for the catalog tier table.
      *
      * @return list<array{min_quantity: int, max_quantity: int|null, unit_price: string, price_source: string}>

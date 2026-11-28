@@ -2,20 +2,25 @@
 
 namespace Tests\Concerns;
 
+use App\Enums\CartItemSource;
 use App\Enums\Role;
 use App\Models\Company;
+use App\Models\CompanyAddress;
 use App\Models\CustomerGroup;
+use App\Models\Product;
 use App\Models\User;
+use App\Services\Cart\CartService;
 use Database\Seeders\CatalogSeeder;
 use Database\Seeders\CustomerGroupSeeder;
 use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\SettingSeeder;
 use Laravel\Sanctum\Sanctum;
 
 trait BuildsPortal
 {
     protected function seedPortal(): void
     {
-        $this->seed([RolePermissionSeeder::class, CustomerGroupSeeder::class, CatalogSeeder::class]);
+        $this->seed([RolePermissionSeeder::class, SettingSeeder::class, CustomerGroupSeeder::class, CatalogSeeder::class]);
     }
 
     protected function staff(Role $role = Role::SuperAdmin): User
@@ -52,5 +57,39 @@ trait BuildsPortal
         Sanctum::actingAs($user, ['*']);
 
         return $user;
+    }
+
+    protected function shippingAddress(Company $company): CompanyAddress
+    {
+        return $company->addresses()->where('type', 'shipping')->first() ?? $company->addresses()->create([
+            'type' => 'shipping',
+            'label' => 'Main Warehouse',
+            'contact_name' => 'Store Keeper',
+            'contact_phone' => '01711111111',
+            'address_line1' => '10 Test Road',
+            'city' => 'Dhaka',
+            'is_default' => true,
+        ]);
+    }
+
+    protected function productId(string $sku): int
+    {
+        return Product::query()->where('sku', $sku)->value('id');
+    }
+
+    /** @param array<string, int> $skuQuantities */
+    protected function fillCart(User $buyer, array $skuQuantities): void
+    {
+        $lines = [];
+        foreach ($skuQuantities as $sku => $qty) {
+            $lines[$this->productId($sku)] = $qty;
+        }
+
+        app(CartService::class)->addMany($buyer, $lines, CartItemSource::Catalog);
+    }
+
+    protected function checkoutPayload(User $buyer, string $method = 'credit', array $extra = []): array
+    {
+        return ['shipping_address_id' => $this->shippingAddress($buyer->company)->id, 'payment_method' => $method] + $extra;
     }
 }

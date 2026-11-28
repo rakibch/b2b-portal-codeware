@@ -120,6 +120,36 @@ class Order extends Model
         return $this->items->every(fn (OrderItem $item) => $item->dispatched_quantity >= $item->quantity);
     }
 
+    /**
+     * Buyers: own company. Super Admin: all. Warehouse (orders.fulfil without companies.view):
+     * confirmed-and-later orders. Sales: their accounts + unassigned accounts.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if ($user->isBuyer()) {
+            return $query->where('company_id', $user->company_id);
+        }
+
+        if ($user->can('companies.manage')) {
+            return $query;
+        }
+
+        if ($user->can('companies.view')) {
+            return $query->whereHas('company', fn (Builder $c) => $c->where('account_manager_id', $user->id)->orWhereNull('account_manager_id'));
+        }
+
+        if ($user->can('orders.fulfil')) {
+            return $query->whereNotIn('status', [OrderStatus::Pending->value, OrderStatus::Cancelled->value]);
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
+
+    public function isVisibleTo(User $user): bool
+    {
+        return self::query()->whereKey($this->id)->visibleTo($user)->exists();
+    }
+
     public function scopeForCompany(Builder $query, int $companyId): Builder
     {
         return $query->where('company_id', $companyId);
