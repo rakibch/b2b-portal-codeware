@@ -2,14 +2,14 @@
 
 Bilingual (English / বাংলা) B2B wholesale ordering platform — Laravel 13 API + Vue 3 SPA.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and folder structure.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and folder structure, and [docs/API.md](docs/API.md) for the endpoint reference.
 
 ## Status
 
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Architecture, migrations, models, seeders | ✅ Done |
-| 2 | Auth, RBAC, KYC, PricingEngine, catalog, quick order, RFQ APIs | ⏳ |
+| 2 | Auth, RBAC, KYC, PricingEngine, catalog, quick order, RFQ APIs | ✅ Done |
 | 3 | Orders, credit ledger, payments, mPDF invoices/challans, routes, policies, lang | ⏳ |
 | 4 | Vue foundation: i18n, Pinia, router guards, layout | ⏳ |
 | 5 | Buyer portal UI | ⏳ |
@@ -26,6 +26,19 @@ cp .env.example .env
 php artisan key:generate
 # configure DB_* in .env, then:
 php artisan migrate --seed
+```
+
+### Tests
+
+```bash
+php artisan test            # SQLite in-memory
+DB_CONNECTION=pgsql DB_DATABASE=b2b_test php artisan test   # PostgreSQL
+```
+
+### Scheduler
+
+```bash
+* * * * * php /path/to/backend/artisan schedule:run >> /dev/null 2>&1
 ```
 
 ### Demo accounts (non-production seeding only; password `Password@123` unless `SEED_DEFAULT_PASSWORD` is set)

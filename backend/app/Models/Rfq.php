@@ -70,6 +70,33 @@ class Rfq extends Model
         return $this->status === RfqStatus::Quoted && ! $this->isExpired();
     }
 
+    /** Buyers: own company. Super Admin: all. Sales: assigned to them / their accounts / unassigned. */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if ($user->isBuyer()) {
+            return $query->where('company_id', $user->company_id);
+        }
+
+        if ($user->can('companies.manage')) {
+            return $query;
+        }
+
+        if (! $user->can('rfqs.view')) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where(function (Builder $q) use ($user): void {
+            $q->where('assigned_to', $user->id)
+                ->orWhereHas('company', fn (Builder $c) => $c->where('account_manager_id', $user->id))
+                ->orWhere(fn (Builder $u) => $u->whereNull('assigned_to')->whereHas('company', fn (Builder $c) => $c->whereNull('account_manager_id')));
+        });
+    }
+
+    public function isVisibleTo(User $user): bool
+    {
+        return self::query()->whereKey($this->id)->visibleTo($user)->exists();
+    }
+
     public function scopeOpen(Builder $query): Builder
     {
         return $query->whereIn('status', [

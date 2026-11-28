@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Enums\UserType;
 use App\Support\Money;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +22,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Security: company_id, user_type, is_active and order_approval_limit are NOT mass assignable;
  * they are set explicitly by services (registration, invitations, admin user management).
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
@@ -107,6 +108,12 @@ class User extends Authenticatable
             && $this->isBuyer()
             && $this->company !== null
             && $this->company->isApproved();
+    }
+
+    /** Wholesale prices are visible to staff and to buyers of KYC-approved companies only. */
+    public function canSeePrices(): bool
+    {
+        return $this->is_active && ($this->isStaff() || $this->canTransact());
     }
 
     /** True when this sub-user's order total requires Buyer Admin approval. */

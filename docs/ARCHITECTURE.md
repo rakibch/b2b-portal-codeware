@@ -19,15 +19,19 @@ API-first Laravel 13 backend (`backend/`) + Vue 3 SPA (`frontend/`). Bilingual (
 | Polymorphism | `Relation::enforceMorphMap` (stable keys, no class names in DB). |
 | Dev safety | `Model::shouldBeStrict()` outside production; destructive DB commands prohibited in production. |
 
-## Pricing precedence (PricingEngineService, Phase 2)
+## Pricing rules (PricingEngineService)
 
-1. Accepted RFQ quoted price (order converted from RFQ)
-2. Company contract price (`company_product_prices`, valid date window, `min_quantity`)
-3. Customer-group volume tier (`product_price_tiers.customer_group_id = company group`)
-4. General volume tier (`customer_group_id IS NULL`)
-5. `base_price` minus group `discount_percent`
+Candidate unit prices for a requested quantity — **the lowest applicable price wins** (ties go to the more specific source):
 
-The lowest applicable price wins between steps 3–5; MOQ / step / max quantity are validated before any price is returned.
+1. `base_price` less the customer group `discount_percent`
+2. General volume tier (`customer_group_id IS NULL`) less the group discount
+3. Customer-group volume tier (absolute price)
+4. Company contract price (`company_product_prices`, within validity window, `quantity >= min_quantity`)
+
+Accepted RFQ prices bypass the engine on RFQ → order conversion (Phase 3).
+Quantity rules checked on every quote: active product, MOQ, `(qty − MOQ) % step == 0`, max order qty, stock (optional).
+Each quote returns exact 2dp totals (subtotal, discount vs list, VAT, total) plus a `next_tier` hint
+("add 8 more to pay ৳830"). Listings are priced in batch with ≤ 2 queries regardless of line count.
 
 ## Database (ERD summary)
 

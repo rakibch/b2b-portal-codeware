@@ -171,6 +171,41 @@ class Company extends Model
         return $query->where('kyc_status', KycStatus::Pending->value);
     }
 
+    /**
+     * Tenant/role scoping for staff listings. Super Admin sees all; a Sales Manager sees companies
+     * assigned to them plus unassigned ones (the KYC intake queue); anyone else sees none.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if ($user->isBuyer()) {
+            return $query->whereKey($user->company_id);
+        }
+
+        if ($user->can('companies.manage')) {
+            return $query;
+        }
+
+        if ($user->can('companies.view')) {
+            return $query->where(fn (Builder $q) => $q->where('account_manager_id', $user->id)->orWhereNull('account_manager_id'));
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
+
+    public function isVisibleTo(User $user): bool
+    {
+        if ($user->isBuyer()) {
+            return $user->company_id === $this->id;
+        }
+
+        if ($user->can('companies.manage')) {
+            return true;
+        }
+
+        return $user->can('companies.view')
+            && ($this->account_manager_id === null || $this->account_manager_id === $user->id);
+    }
+
     /** Restricts to companies a Sales Manager is assigned to. */
     public function scopeManagedBy(Builder $query, User $manager): Builder
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
+use App\Services\Catalog\CatalogCache;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +37,12 @@ class Category extends Model
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order');
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => CatalogCache::flush());
+        static::deleted(fn () => CatalogCache::flush());
     }
 
     public function products(): HasMany

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Catalog\CatalogCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,6 +17,12 @@ class Brand extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => CatalogCache::flush());
+        static::deleted(fn () => CatalogCache::flush());
     }
 
     public function products(): HasMany
