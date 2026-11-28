@@ -28,6 +28,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind a load balancer / reverse proxy: trust only the listed proxy IPs/CIDRs so
+        // client IPs (rate limiting, audit log) and HTTPS detection are correct.
+        if ($proxies = env('TRUSTED_PROXIES')) {
+            $middleware->trustProxies(at: $proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
+
         $middleware->append(SecurityHeaders::class);
         $middleware->api(prepend: [SetLocale::class]);
         $middleware->throttleApi('api');

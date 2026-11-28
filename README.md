@@ -2,7 +2,7 @@
 
 Bilingual (English / বাংলা) B2B wholesale ordering platform — Laravel 13 API + Vue 3 SPA.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and folder structure, and [docs/API.md](docs/API.md) for the endpoint reference.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and folder structure, [docs/API.md](docs/API.md) for the endpoint reference and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the production checklist.
 
 ## Status
 
@@ -13,7 +13,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions, ERD and f
 | 3 | Orders, credit ledger, payments, mPDF invoices/challans, routes, policies, lang | ✅ Done |
 | 4 | Vue foundation: i18n, Pinia, router guards, layout | ✅ Done |
 | 5 | Buyer portal UI | ✅ Done |
-| 6 | Admin portal UI, deployment checklist | ⏳ |
+| 6 | Admin portal UI, deployment checklist | ✅ Done |
 
 ## Backend setup
 

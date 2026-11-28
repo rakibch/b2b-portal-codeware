@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController
 use App\Http\Controllers\Api\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Api\Admin\CompanyPriceController;
 use App\Http\Controllers\Api\Admin\CustomerGroupController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\FinanceController;
 use App\Http\Controllers\Api\Admin\FulfilmentController;
 use App\Http\Controllers\Api\Admin\KycController;
@@ -29,8 +30,8 @@ use App\Http\Controllers\Api\Buyer\RfqController as BuyerRfqController;
 use App\Http\Controllers\Api\Buyer\TeamController;
 use App\Http\Controllers\Api\Catalog\CatalogController;
 use App\Http\Controllers\Api\Payments\GatewayController;
-use App\Http\Controllers\Api\Shared\DocumentDownloadController;
 use App\Http\Controllers\Api\Shared\AnnouncementController;
+use App\Http\Controllers\Api\Shared\DocumentDownloadController;
 use App\Http\Controllers\Api\Shared\DocumentPdfController;
 use App\Http\Controllers\Api\Shared\LedgerController;
 use App\Http\Controllers\Api\Shared\NotificationController;
@@ -163,6 +164,8 @@ Route::prefix('v1')->group(function (): void {
 
         // ============================================================ ADMIN PORTAL
         Route::prefix('admin')->middleware('user.type:staff')->group(function (): void {
+            Route::get('dashboard', AdminDashboardController::class)->middleware('permission:admin.dashboard.view');
+            Route::get('lookups', [AdminDashboardController::class, 'lookups']);
 
             // KYC queue
             Route::middleware('permission:kyc.review')->group(function (): void {

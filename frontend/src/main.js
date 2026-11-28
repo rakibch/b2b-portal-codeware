@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import { i18n } from './i18n'
 import { registerPortalRoutes, router } from './router'
+import { adminRoutes } from './router/routes/admin'
 import { buyerRoutes } from './router/routes/buyer'
 import { configureHttp } from './api/http'
 import { useAuthStore } from './stores/auth'
@@ -74,7 +75,7 @@ watch(
   },
 )
 
-registerPortalRoutes(buyerRoutes)
+registerPortalRoutes([...buyerRoutes, ...adminRoutes])
 app.use(router)
 
 router.isReady().then(() => app.mount('#app'))

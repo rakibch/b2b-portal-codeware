@@ -82,7 +82,8 @@ Order status machine: `pending → confirmed → processing → (partially_dispa
 
 ```
 b2b-portal-codeware/
-├── docs/ARCHITECTURE.md
+├── docs/{ARCHITECTURE.md, API.md, DEPLOYMENT.md}
+├── deploy/{nginx.conf, supervisor-queue.conf, crontab, deploy.sh, backup.sh}
 ├── backend/                                   # Laravel 13 (PHP 8.3+)
 │   ├── app/
 │   │   ├── Enums/                             # OrderStatus (state machine), KycStatus, Role, PaymentMethod, ...
@@ -136,7 +137,7 @@ b2b-portal-codeware/
         ├── i18n/{index.js, locales/en.json, locales/bn.json}
         ├── composables/{useFormat.js (formatCurrency), useApiForm.js, useDebounce.js}
         ├── stores/{auth.js, locale.js, cart.js, catalog.js, notifications.js, toast.js}
-        ├── router/{index.js, guards.js (pure, tested), navigation.js, routes/buyer.js}
+        ├── router/{index.js, guards.js (pure, tested), navigation.js, routes/{buyer,admin}.js}
         ├── layouts/{AuthLayout.vue, PortalLayout.vue}
         ├── components/
         │   ├── layout/{AppNavbar, AppSidebar, LocaleSwitcher (EN | বাং), NotificationBell, UserMenu, ToastHost, AnnouncementBar}.vue
@@ -148,5 +149,8 @@ b2b-portal-codeware/
             ├── buyer/{Dashboard, KycStatus, Catalog, ProductDetail, QuickOrder, Cart, Checkout,
             │          Orders, OrderDetail, Rfqs, RfqCreate, RfqDetail, Invoices, Payments, Ledger,
             │          Company, Addresses, Team}View.vue                        (Phase 5)
-            └── admin/*                                                         (Phase 6)
+            └── admin/{AdminDashboard (KPIs + SVG sales chart), KycQueue, KycReview, Companies, CompanyDetail
+                       (terms, ledger, adjustments, credit notes, contract prices), StaffOrderCreate, AdminOrders,
+                       AdminOrderDetail (confirm, shipments, cash), Fulfilment, AdminPayments, Receivables,
+                       AdminRfqs, AdminRfqDetail, Products, ProductEditor (tiers, stock), Categories, Pricing}View.vue  (Phase 6)
 ```

@@ -59,7 +59,7 @@ class ProductService
             $product->save();
 
             if (array_key_exists('tiers', $data)) {
-                $this->syncTiers($product, $data['tiers'] ?? []);
+                $this->syncTiers($product, $data['tiers'] ?? []); // explicit empty list clears all tiers
             }
 
             AuditLog::record('product.updated', $product, $old, $product->only(array_keys($old)) + ['by' => $actor->id]);

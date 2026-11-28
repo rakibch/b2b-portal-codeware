@@ -95,6 +95,8 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 
 | Method | Path | Permission |
 |---|---|---|
+| GET | `/dashboard` | `admin.dashboard.view` · revenue (this / last month), pending orders & KYC, receivables, overdue, payments to verify, low stock, 30-day sales series — scoped by role |
+| GET | `/lookups` | KYC/terms option lists: active customer groups + eligible account managers |
 | GET | `/kyc?status=` · `/kyc/{company}` | `kyc.review` |
 | POST | `/kyc/{company}/approve` | `kyc.review` (+ `credit.manage` to set `credit_limit, payment_terms_days, credit_enabled, account_manager_id`) |
 | POST | `/kyc/{company}/reject|suspend` | `kyc.review` · `reason` |

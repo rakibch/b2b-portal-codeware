@@ -7,7 +7,7 @@ function keys(obj, prefix = '') {
 }
 
 function placeholders(str) {
-  return [...str.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort()
+  return [...new Set([...str.matchAll(/\{(\w+)\}/g)].map((m) => m[1]))].sort()
 }
 
 describe('locale dictionaries', () => {

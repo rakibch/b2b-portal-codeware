@@ -188,6 +188,11 @@
     "submitting": "Submitting…"
   },
   "kyc": {
+    "submitted_col": "Submitted",
+    "terms_days": "Payment terms (days)",
+    "credit_by_admin": "Credit limits are set by a Super Admin after approval.",
+    "rejected_docs_block": "Resolve rejected documents before approving.",
+    "credit_enabled": "Credit line enabled",
     "pending_title": "Your application is under review",
     "pending_body": "Thanks for applying! Our team is verifying your documents. You can browse the catalog meanwhile — wholesale prices and ordering unlock once approved.",
     "rejected_title": "Your application needs attention",
@@ -245,6 +250,29 @@
     "dispatched": "Dispatched",
     "delivered": "Delivered",
     "cancelled": "Cancelled"
+  },
+  "kyc_status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "suspended": "Suspended"
+  },
+  "payment_status": {
+    "pending": "Pending",
+    "verified": "Verified",
+    "rejected": "Rejected"
+  },
+  "shipment_status": {
+    "packing": "Packing",
+    "dispatched": "Dispatched",
+    "delivered": "Delivered"
+  },
+  "rfq_status": {
+    "submitted": "Submitted",
+    "under_review": "Under review",
+    "quoted": "Quoted",
+    "accepted": "Accepted",
+    "converted": "Converted"
   },
   "roles": {
     "super_admin": "Super Admin",
@@ -506,6 +534,10 @@
     "not_enabled": "Credit not enabled"
   },
   "dashboard": {
+    "orders_count": "{count} order | {count} orders",
+    "vs_last_month": "{delta} vs last month",
+    "awaiting_buyer_approval": "Awaiting buyer approval",
+    "no_low_stock": "All SKUs are above their alert level.",
     "awaiting_approval": "{count} orders from your team are awaiting your approval",
     "open_orders": "Open orders",
     "no_reorder_items": "Your frequently ordered products will appear here.",
@@ -559,6 +591,32 @@
     "shipping": "Delivery"
   },
   "admin": {
+    "reduces_balance": "reduces balance",
+    "this_shipment": "This shipment",
+    "carrier": "Carrier",
+    "vehicle_no": "Vehicle no.",
+    "driver": "Driver",
+    "driver_phone": "Driver phone",
+    "tracking_no": "Tracking no.",
+    "internal_notes": "Internal notes (staff only)",
+    "void": "Void",
+    "assigned_to_me": "Assigned to me",
+    "deleted": "Deleted",
+    "pack_label": "Pack name",
+    "step": "Step quantity",
+    "max_order_qty": "Max order qty",
+    "opening_stock": "Opening stock",
+    "image": "Product image",
+    "tiers_hint": "Lowest applicable price wins: general tiers, group tiers and contract prices are compared per quantity.",
+    "current_stock": "Current stock: {qty}",
+    "stock_delta": "Change (+/−)",
+    "stock_delta_hint": "Positive for goods received, negative for damage or count corrections.",
+    "code": "Code",
+    "short_name": "Short name",
+    "parent_category": "Parent category",
+    "sort_order": "Sort order",
+    "pricing_hint": "Customer groups apply a discount to list and tier prices; group-specific tiers are set on each product.",
+    "group_discount": "Group discount %",
     "approve_with_terms": "Approve & set credit terms",
     "inspect_documents": "Inspect documents",
     "new_product": "New product",
