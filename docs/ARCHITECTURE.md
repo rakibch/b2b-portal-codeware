@@ -52,6 +52,14 @@ cancel   ──► restore undispatched stock → void invoice → ledger REVERS
 - PDFs: mPDF + Noto Sans Bengali with OTL; Bangla numerals, lakh/crore grouping and amount-in-words
   (`App\Support\Localized`). Challans never contain prices.
 
+## Frontend security model
+
+- Bearer token (Sanctum, 7-day server expiry) kept in `sessionStorage`; `localStorage` only with "keep me signed in".
+  No `v-html` anywhere; deploy with a strict CSP (`script-src 'self'`) to contain XSS token theft.
+- Every request sends `Accept-Language`; 401 clears the session and redirects to login with a
+  sanitised `?redirect=` (open-redirect safe); 403 `kyc_not_approved` refreshes the session state.
+- Route guards (`router/guards.js`) mirror API authorization for UX only — the API remains the authority.
+
 ## Database (ERD summary)
 
 ```
@@ -117,24 +125,25 @@ b2b-portal-codeware/
 │   ├── resources/fonts/                       # Hind Siliguri / Noto Sans Bengali TTF for mPDF
 │   ├── routes/api.php
 │   └── tests/{Feature,Unit}/
-└── frontend/                                  # Vue 3 + Vite + Pinia + Tailwind (Phase 4–6)
-    ├── index.html
-    ├── vite.config.js / tailwind.config.js / postcss.config.js
+└── frontend/                                  # Vue 3 + Vite 8 + Pinia 4 + Vue Router 5 + Tailwind 4
+    ├── index.html                             # Inter + Hind Siliguri (Google Fonts)
+    ├── vite.config.js                         # /api dev proxy, vendor/i18n/icons chunks, Vitest config
+    ├── tests/                                 # Vitest: formatters, guards, http interceptors, stores, locale parity
     └── src/
         ├── main.js / App.vue
-        ├── api/{http.js, auth.js, catalog.js, cart.js, orders.js, rfqs.js, ledger.js, admin/*.js}
+        ├── assets/main.css                    # Tailwind @theme tokens; html[lang=bn] → Bangla typography
+        ├── api/{http.js, ApiError.js, auth.js, catalog.js, cart.js, notifications.js, …}
         ├── i18n/{index.js, locales/en.json, locales/bn.json}
-        ├── composables/{useCurrency.js, useToast.js, useDebounce.js, usePagination.js}
-        ├── stores/{auth.js, locale.js, cart.js, catalog.js, notifications.js}
-        ├── router/{index.js, guards.js, routes.buyer.js, routes.admin.js}
+        ├── composables/{useFormat.js (formatCurrency), useApiForm.js, useDebounce.js}
+        ├── stores/{auth.js, locale.js, cart.js, catalog.js, notifications.js, toast.js}
+        ├── router/{index.js, guards.js (pure, tested), navigation.js}
         ├── layouts/{AuthLayout.vue, PortalLayout.vue}
         ├── components/
-        │   ├── layout/{AppNavbar,AppSidebar,MobileDrawer,LocaleSwitcher,NotificationBell}.vue
-        │   ├── ui/{BaseButton,BaseInput,BaseSelect,BaseModal,StatusBadge,DataTable,Pagination,ToastHost,EmptyState,FileDrop}.vue
-        │   ├── catalog/{ProductCard,ProductRow,TierPriceTable,QuantityStepper,StockBadge}.vue
-        │   └── charts/SalesChart.vue
+        │   ├── layout/{AppNavbar, AppSidebar, LocaleSwitcher (EN | বাং), NotificationBell, UserMenu, ToastHost, AnnouncementBar}.vue
+        │   └── ui/{AppIcon, BaseButton, BaseInput, BaseSelect, BaseModal, ConfirmDialog, StatusBadge, EmptyState, PageHeader, SpinnerBlock}.vue
         └── views/
-            ├── auth/{Login,Register,PendingApproval,AcceptInvitation,ForgotPassword}.vue
-            ├── buyer/{Dashboard,Catalog,ProductDetail,QuickOrder,Cart,Checkout,Orders,OrderDetail,Rfqs,RfqDetail,Invoices,Ledger,CompanyUsers,Addresses}.vue
-            └── admin/{Dashboard,KycQueue,KycReview,Companies,Products,ProductEditor,Orders,OrderFulfilment,Rfqs,RfqQuote,Payments,Ledger,Users,Settings}.vue
+            ├── auth/{Login, ForgotPassword, ResetPassword}View.vue           (Phase 4)
+            ├── account/AccountView.vue, errors/{Forbidden, NotFound}View.vue  (Phase 4)
+            ├── buyer/*                                                         (Phase 5)
+            └── admin/*                                                         (Phase 6)
 ```

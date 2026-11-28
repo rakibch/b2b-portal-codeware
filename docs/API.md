@@ -36,6 +36,9 @@ Errors: `{"message": "<localised>", "code": "<stable_code>", "context": {...}}`;
 | GET | `/invoices/{invoice_number}/pdf?lang=en\|bn&inline=1` | Tax Invoice PDF (buyer company or staff) |
 | GET | `/shipments/{challan_number}/challan?lang=en\|bn` | Delivery Challan PDF — no prices |
 | GET | `/payments/{reference}/slip` | Bank/cheque slip (owner company or staff) |
+| GET | `/announcements` | Published announcements for the viewer's audience (localised) |
+| GET | `/notifications?unread=&page=` · `/notifications/unread-count` | Own in-app notifications |
+| POST | `/notifications/{id}/read` · `/notifications/read-all` | Mark read |
 
 ## Payment gateways (public, signature-verified)
 

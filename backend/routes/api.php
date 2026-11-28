@@ -29,8 +29,10 @@ use App\Http\Controllers\Api\Buyer\TeamController;
 use App\Http\Controllers\Api\Catalog\CatalogController;
 use App\Http\Controllers\Api\Payments\GatewayController;
 use App\Http\Controllers\Api\Shared\DocumentDownloadController;
+use App\Http\Controllers\Api\Shared\AnnouncementController;
 use App\Http\Controllers\Api\Shared\DocumentPdfController;
 use App\Http\Controllers\Api\Shared\LedgerController;
+use App\Http\Controllers\Api\Shared\NotificationController;
 use App\Http\Controllers\Api\Shared\PaymentSlipController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,6 +77,13 @@ Route::prefix('v1')->group(function (): void {
         });
 
         Route::get('documents/{document}/download', DocumentDownloadController::class)->whereNumber('document');
+        Route::get('announcements', AnnouncementController::class);
+
+        // In-app notifications
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('notifications/read-all', [NotificationController::class, 'markAllRead']);
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->whereUuid('id');
         Route::get('invoices/{invoice}/pdf', [DocumentPdfController::class, 'invoice']);
         Route::get('shipments/{shipment}/challan', [DocumentPdfController::class, 'challan']);
         Route::get('payments/{payment}/slip', PaymentSlipController::class);

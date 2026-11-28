@@ -7,6 +7,7 @@ use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class Announcement extends Model
 {
@@ -24,6 +25,20 @@ class Announcement extends Model
             'published_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        $flush = function (): void {
+            foreach (AnnouncementAudience::cases() as $audience) {
+                foreach (config('b2b.supported_locales') as $locale) {
+                    Cache::forget("announcements.{$audience->value}.{$locale}");
+                }
+            }
+        };
+
+        static::saved($flush);
+        static::deleted($flush);
     }
 
     public function creator(): BelongsTo
